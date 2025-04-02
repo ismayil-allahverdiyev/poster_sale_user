@@ -10,6 +10,9 @@ class Assets {
 
   static const String sign_up_image = "assets/images/sign_up_image.png";
 
+  static const String forget_password_image =
+      "assets/images/forget-password-image.jpg";
+
   static const String icon_search = "assets/icons/icon-search.png";
 
   static const String icon_aqua = "assets/icons/icon-aqua.png";

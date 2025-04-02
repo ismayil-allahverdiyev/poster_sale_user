@@ -45,22 +45,25 @@ class ProductPage extends GetView<ProductController> {
         ),
         // *Reminder* Turn on for user app
 
-        // Column(
-        //   children: [
-        //     const Text(
-        //       "Any question?",
-        //       style: TextStyle(
-        //         fontWeight: FontWeight.w600,
-        //       ),
-        //     ),
-        //     MessageTextField(
-        //       controller: controller.messageController,
-        //     ),
-        //     const SizedBox(
-        //       height: 16,
-        //     ),
-        //   ],
-        // )
+        Column(
+          children: [
+            const Text(
+              "Any question?",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            MessageTextField(
+              controller: controller.messageController,
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+          ],
+        )
       ],
     );
   }

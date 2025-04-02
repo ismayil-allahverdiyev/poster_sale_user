@@ -29,6 +29,10 @@ class SignUpOverviewHeaderWidget extends GetWidget<LoginController> {
                 image: Assets.sign_in_image,
                 title: "Sign In",
               ),
+              LoginTitleWidget(
+                image: Assets.forget_password_image,
+                title: "Forget password",
+              ),
             ],
             height: Get.height / 5 * 2,
           ),

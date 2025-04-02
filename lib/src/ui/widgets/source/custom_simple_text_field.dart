@@ -43,7 +43,7 @@ class CustomSimpleTextField extends StatelessWidget {
     this.maxLines,
     this.isRequired = false,
     this.onChanged,
-    this.isObscure = false,
+    this.isObscure = true,
   });
 
   @override

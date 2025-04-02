@@ -29,6 +29,7 @@ class SignUpBodyWidget extends GetWidget<LoginController> {
                 ),
                 CustomSimpleTextField(
                   hintText: "E-mail",
+                  controller: controller.emailController,
                   prefixIcon: Image.asset(Assets.icon_sms),
                 ),
                 const SizedBox(
@@ -38,6 +39,7 @@ class SignUpBodyWidget extends GetWidget<LoginController> {
                   () {
                     return CustomSimpleTextField(
                       hintText: "Password",
+                      controller: controller.passwordController,
                       prefixIcon: Image.asset(Assets.icon_lock_2),
                       suffixIcon: const LockTextfieldWidget(
                         isSign: false,
@@ -53,6 +55,7 @@ class SignUpBodyWidget extends GetWidget<LoginController> {
                   () {
                     return CustomSimpleTextField(
                       hintText: "Repeat Password",
+                      controller: controller.repeatPasswordController,
                       prefixIcon: Image.asset(Assets.icon_lock_2),
                       suffixIcon: const LockTextfieldWidget(
                         isSign: false,
@@ -66,7 +69,7 @@ class SignUpBodyWidget extends GetWidget<LoginController> {
           ),
           CustomLargeButtonWidget(
             title: "Finalize",
-            onTap: () => Get.toNamed(Routes.BOTTOM),
+            onTap: () => controller.signUp(),
           ),
           CustomTextButtonWidget(
             onPressed: () {

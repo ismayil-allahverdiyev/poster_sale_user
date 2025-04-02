@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poster_sale_user/src/controllers/login/login_controller.dart';
+import 'package:poster_sale_user/src/ui/login/widgets/forget_password_body_widget.dart';
 import 'package:poster_sale_user/src/ui/login/widgets/sign_in_body_widget.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_large_button_widget.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_tabbar_view.dart';
@@ -31,6 +32,7 @@ class SignUpOverviewPage extends GetView<LoginController> {
                 widgets: const [
                   SignUpBodyWidget(),
                   SignInBodyWidget(),
+                  ForgetPasswordBodyWidget()
                 ],
                 height: Get.height / 5 * 3,
                 isScrollable: false,

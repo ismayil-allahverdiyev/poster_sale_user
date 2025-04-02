@@ -29,6 +29,8 @@ class SignInBodyWidget extends GetWidget<LoginController> {
                 ),
                 CustomSimpleTextField(
                   hintText: "E-mail",
+                  controller: controller.signInEmailController,
+                  maxLines: 1,
                   prefixIcon: Image.asset(Assets.icon_sms),
                 ),
                 const SizedBox(
@@ -38,6 +40,7 @@ class SignInBodyWidget extends GetWidget<LoginController> {
                   () {
                     return CustomSimpleTextField(
                       hintText: "Password",
+                      controller: controller.signInPasswordController,
                       prefixIcon: Image.asset(Assets.icon_lock_2),
                       suffixIcon: const LockTextfieldWidget(
                         isSign: true,
@@ -50,7 +53,7 @@ class SignInBodyWidget extends GetWidget<LoginController> {
                   alignment: Alignment.centerRight,
                   child: CustomTextButtonWidget(
                     onPressed: () {
-                      controller.tabController?.animateTo(0);
+                      controller.tabController?.animateTo(2);
                     },
                     isDense: true,
                     title: "Forgot password?",
@@ -61,7 +64,7 @@ class SignInBodyWidget extends GetWidget<LoginController> {
           ),
           CustomLargeButtonWidget(
             title: "Log in",
-            onTap: () => Get.toNamed(Routes.BOTTOM),
+            onTap: () => controller.signIn(),
           ),
           CustomTextButtonWidget(
             onPressed: () {
