@@ -61,6 +61,8 @@ class Assets {
 
   static const String icon_sms = "assets/base_icons/icon-sms.png";
 
+  static const String icon_user = "assets/base_icons/icon-user.png";
+
   static const String icon_lock_2 = "assets/base_icons/icon-lock-2.png";
 
   static const String icon_eye = "assets/base_icons/icon-eye.png";

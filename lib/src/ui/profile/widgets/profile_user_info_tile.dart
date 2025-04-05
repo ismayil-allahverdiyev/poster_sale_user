@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poster_sale_user/src/controllers/profile/profile_controller.dart';
 
 import '../../../constants/assets.dart';
 import '../../../routes/app_routes.dart';
 import '../../theme/app_colors.dart';
+import '../../widgets/source/custom_shimmer_wrapper_widget.dart';
 
-class ProfileUserInfoTile extends StatelessWidget {
+class ProfileUserInfoTile extends GetWidget<ProfileController> {
   const ProfileUserInfoTile({
     super.key,
   });
@@ -24,18 +26,46 @@ class ProfileUserInfoTile extends StatelessWidget {
           ),
         ),
       ),
-      title: const Text(
-        'someemail@gmail.com',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
+      title: Obx(
+        () {
+          return controller.user.value == null
+              ? CustomShimmer(
+                  child: Container(
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                )
+              : Text(
+                  controller.user.value?.name ?? "",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                );
+        },
       ),
-      subtitle: const Text(
-        '15.06.2024',
-        style: TextStyle(
-          fontSize: 14,
-        ),
+      subtitle: Obx(
+        () {
+          return controller.user.value == null
+              ? CustomShimmer(
+                  child: Container(
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                )
+              : Text(
+                  controller.user.value!.timestamp.toDate().toString(),
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                );
+        },
       ),
       trailing: InkWell(
         borderRadius: BorderRadius.circular(20),

@@ -16,46 +16,52 @@ class BottomNavBar extends GetView<BottomNavBarController> {
       drawer: Drawer(
         shape: const RoundedRectangleBorder(),
         backgroundColor: primaryColor,
-        child: ListView(
+        child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: whiteColor.withOpacity(0.5),
-                child: Image.asset(
-                  Assets.icon_profile,
-                  scale: 2.5,
-                ),
+            Expanded(
+              child: ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: whiteColor.withOpacity(0.5),
+                      child: Image.asset(
+                        Assets.icon_profile,
+                        scale: 2.5,
+                      ),
+                    ),
+                  ),
+                  CustomDrawerTile(
+                    title: "Home",
+                    index: 0,
+                    closeFunction: openEndDrawer,
+                  ),
+                  CustomDrawerTile(
+                    title: "Messages",
+                    index: 1,
+                    closeFunction: openEndDrawer,
+                  ),
+                  CustomDrawerTile(
+                    title: "Bag",
+                    index: 2,
+                    closeFunction: openEndDrawer,
+                  ),
+                  CustomDrawerTile(
+                    title: "Profile",
+                    index: 3,
+                    closeFunction: openEndDrawer,
+                  ),
+                ],
               ),
             ),
-            CustomDrawerTile(
-              title: "Home",
-              index: 0,
-              closeFunction: () {
-                scaffoldKey.currentState!.openEndDrawer();
-              },
-            ),
-            CustomDrawerTile(
-              title: "Messages",
-              index: 1,
-              closeFunction: () {
-                scaffoldKey.currentState!.openEndDrawer();
-              },
-            ),
-            CustomDrawerTile(
-              title: "Bag",
-              index: 2,
-              closeFunction: () {
-                scaffoldKey.currentState!.openEndDrawer();
-              },
-            ),
-            CustomDrawerTile(
-              title: "Profile",
-              index: 3,
-              closeFunction: () {
-                scaffoldKey.currentState!.openEndDrawer();
-              },
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: CustomDrawerTile(
+                title: "Log out",
+                index: 4,
+                closeFunction: openEndDrawer,
+              ),
             ),
           ],
         ),
@@ -77,6 +83,10 @@ class BottomNavBar extends GetView<BottomNavBarController> {
         ],
       ),
     );
+  }
+
+  openEndDrawer() {
+    scaffoldKey.currentState!.openEndDrawer();
   }
 }
 
@@ -117,7 +127,7 @@ class CustomDrawerTile extends GetWidget<BottomNavBarController> {
             ),
             onTap: () {
               closeFunction();
-              controller.onTap(1);
+              controller.onTap(index);
             },
           );
         },

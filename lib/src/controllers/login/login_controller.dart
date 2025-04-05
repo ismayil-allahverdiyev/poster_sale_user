@@ -1,9 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poster_sale_user/src/controllers/local_storage/local_storage_controller.dart';
+import 'package:poster_sale_user/src/data/models/user/add_user_model.dart';
 import '../../constants/local_storage.dart';
+import '../../data/provider/api_client.dart';
 import '../../data/repository/repository.dart';
+import '../../routes/app_routes.dart';
+import '../bottom_navbar/bottom_navbar_controller.dart';
 
 class LoginController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -25,6 +30,7 @@ class LoginController extends GetxController
   TabController? tabController;
 
   var emailController = TextEditingController();
+  var nameController = TextEditingController();
   var passwordController = TextEditingController();
   var repeatPasswordController = TextEditingController();
 
@@ -38,6 +44,7 @@ class LoginController extends GetxController
   var selectedIndex = 0.obs;
   var isPasswordOn = false.obs;
   var isSignPasswordOn = false.obs;
+  var isLoading = false.obs;
 
   // ***********************************************
 
@@ -75,14 +82,38 @@ class LoginController extends GetxController
         return false;
       }
 
+      isLoading.value = true;
+
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
 
-      return handleUserInfo(userCredential);
+      bool isFinishedCorrectly = await handleUserInfo(userCredential);
+
+      if (isFinishedCorrectly) {
+        await repository.postData(
+          collection: "users",
+          data: AddUserModel(
+            email: emailController.text,
+            name: nameController.text,
+            timestamp: DateTime.now(),
+            id: userCredential.user!.uid,
+          ).toJson(),
+        );
+
+        return true;
+      }
+
+      repository.errorHandler(
+        title: "Could not sign up!",
+        message: "Could not finish sign up process.",
+      );
+
+      return false;
     } on FirebaseAuthException catch (e) {
+      isLoading.value = false;
       repository.errorHandler(
         title: "Could not sign up!",
         message: e.message ?? "Could not finish authentication.",
@@ -104,12 +135,15 @@ class LoginController extends GetxController
         return false;
       }
 
+      isLoading.value = true;
+
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: signInEmailController.text,
         password: signInPasswordController.text,
       );
       return handleUserInfo(userCredential);
     } on FirebaseAuthException catch (e) {
+      isLoading.value = false;
       repository.errorHandler(
         title: "Could not sign in!",
         message: e.message ?? "Authentication failed. Please try again.",
@@ -118,21 +152,21 @@ class LoginController extends GetxController
     }
   }
 
-  // Sign Out
-  Future<void> signOut() async {
-    await _auth.signOut();
-  }
-
   // Reset password
   Future<void> sendPasswordResetEmail() async {
     try {
+      isLoading.value = true;
+
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: forgetPasswordEmailController.text);
       repository.showMessage(
         title: "Password reset request",
         message: "Check your inbox for instructions to reset your password.",
       );
+
+      isLoading.value = false;
     } on FirebaseAuthException catch (e) {
+      isLoading.value = false;
       repository.errorHandler(
         title: "Password reset.",
         message: e.message ?? "Password reset failed. Please try again.",
@@ -145,6 +179,7 @@ class LoginController extends GetxController
     var user = userCredential.user;
 
     if (user == null) {
+      isLoading.value = false;
       repository.errorHandler(
         title: "Authentication Failed",
         message: "User not found. Please try again.",
@@ -155,6 +190,7 @@ class LoginController extends GetxController
 
     var token = await user.getIdToken();
     if (token == null) {
+      isLoading.value = false;
       repository.errorHandler(
         title: "Authentication Failed",
         message: "Invalid token. Please try again.",
@@ -163,8 +199,25 @@ class LoginController extends GetxController
       return false;
     }
 
+    print("The token " + token);
+
     var localStorageController = Get.find<LocalStorageController>();
     localStorageController.saveStringToLocal(LocalStorageConst.jwtToken, token);
+    localStorageController.saveBooleanToLocal(LocalStorageConst.login, false);
+    localStorageController.saveStringToLocal(
+      LocalStorageConst.startPage,
+      Routes.BOTTOM,
+    );
+
+    isLoading.value = false;
+
+    Get.offAllNamed(Routes.BOTTOM)!.then(
+      (value) => Get.put<BottomNavBarController>(
+        BottomNavBarController(
+          repository: Repository(firestore: FirebaseFirestore.instance),
+        ),
+      ),
+    );
     return true;
   }
 

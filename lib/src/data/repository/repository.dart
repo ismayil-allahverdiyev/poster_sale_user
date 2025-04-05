@@ -1,16 +1,19 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import '../../../src/ui/theme/app_colors.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../constants/endpoints.dart';
 import '../../constants/local_storage.dart';
 import '../../controllers/local_storage/local_storage_controller.dart';
+import '../../routes/app_routes.dart';
 import '../provider/api_client.dart';
 
 class Repository {
@@ -44,6 +47,16 @@ class Repository {
     return headers;
   }
 
+  getUserId() {
+    var localStorageController = Get.find<LocalStorageController>();
+    var token =
+        localStorageController.getStringFromLocal(LocalStorageConst.jwtToken);
+
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+
+    return decodedToken["user_id"];
+  }
+
   Future<XFile?> getImage({required int index}) async {
     final ImagePicker picker = ImagePicker();
     var status1 = await Permission.photos.status;
@@ -62,6 +75,17 @@ class Repository {
       imageQuality: 20,
       preferredCameraDevice: CameraDevice.rear,
     );
+  }
+
+  // Sign Out
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
+    var localStorageController = Get.find<LocalStorageController>();
+
+    localStorageController.removeFromLocal(LocalStorageConst.jwtToken);
+    localStorageController.removeFromLocal(LocalStorageConst.startPage);
+
+    Get.offAllNamed(Routes.SIGNUPOVERVIEW);
   }
 
   getNotificationToken() async {
@@ -123,7 +147,7 @@ class Repository {
         String field = fields[0];
         String text = entry.value;
 
-        if (fields[1] == "true") {
+        if (fields.length > 1 && fields[1] == "true") {
           secondRound.add({
             "field": entry.key,
             "text": text,

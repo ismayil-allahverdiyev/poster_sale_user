@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poster_sale_user/src/data/models/user/user_model.dart';
 import '../../data/models/poster/poster_model.dart';
 import '../../data/repository/repository.dart';
 
@@ -9,7 +10,7 @@ class ProfileController extends GetxController
   ProfileController({required this.repository});
 
   // Variables
-  var myPosters = <PosterModel>[].obs;
+  var user = Rxn<UserModel>();
   var isLoaded = false.obs;
 
   // ***********************************************
@@ -18,24 +19,26 @@ class ProfileController extends GetxController
   @override
   onInit() async {
     super.onInit();
-    await getPosters();
+    await getUserInfo();
   }
 
   // ***********************************************
 
-  getPosters() async {
+  getUserInfo() async {
     isLoaded.value = false;
     var res = await repository.getData(
-      collection: "products",
-      orderField: "created_at",
-      isOrderDescendant: true,
+      collection: "users",
+      searchCriteria: {"id": repository.getUserId()},
     );
 
-    myPosters.clear();
-
-    myPosters.value = res.map((e) => PosterModel.fromJson(e)).toList();
-
-    myPosters.refresh();
+    if (res.isEmpty) {
+      repository.errorHandler(
+        title: "Error",
+        message: "We could not get your user information!",
+      );
+    } else {
+      user.value = UserModel.fromJson(res[0]);
+    }
 
     isLoaded.value = true;
   }
