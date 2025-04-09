@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poster_sale_user/src/controllers/product/product_controller.dart';
+import 'package:poster_sale_user/src/ui/theme/app_colors.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_scaffold.dart';
+import '../widgets/source/custom_rounded_button.dart';
 import '../widgets/source/custom_smooth_indicator_widget.dart';
 import '../widgets/source/message_text_field.dart';
 import 'widgets/image_tabbar_widget.dart';
@@ -45,25 +47,38 @@ class ProductPage extends GetView<ProductController> {
         ),
         // *Reminder* Turn on for user app
 
-        Column(
-          children: [
-            const Text(
-              "Any question?",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(
-              height: 2,
-            ),
-            MessageTextField(
-              controller: controller.messageController,
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-          ],
-        )
+        Obx(() {
+          return controller.hasMessaged.value
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CustomRoundedButton(
+                    backgroundColor: primaryColor,
+                    textColor: whiteColor,
+                    message: "Open message history",
+                    onTap: controller.openMessagesPage,
+                  ),
+                )
+              : Column(
+                  children: [
+                    const Text(
+                      "Any question?",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 2,
+                    ),
+                    MessageTextField(
+                      controller: controller.messageController,
+                      onSend: controller.onSendFirstMessage,
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                  ],
+                );
+        })
       ],
     );
   }

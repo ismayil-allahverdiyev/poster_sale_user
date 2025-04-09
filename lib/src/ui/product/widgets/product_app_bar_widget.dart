@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poster_sale_user/src/constants/data.dart';
-import 'package:poster_sale_user/src/ui/theme/app_colors.dart';
-import 'package:poster_sale_user/src/ui/widgets/source/custom_shimmer_wrapper_widget.dart';
-
 import '../../../constants/assets.dart';
 import '../../../controllers/product/product_controller.dart';
 import '../../widgets/source/custom_icon_button.dart';

@@ -25,10 +25,20 @@ class ProfileController extends GetxController
   // ***********************************************
 
   getUserInfo() async {
+    var customerId = repository.getUserId();
+    if (customerId == null) {
+      repository.errorHandler(
+        title: "Something went wrong!",
+        message: "Could not retrieve user info.",
+      );
+      return;
+    }
     isLoaded.value = false;
     var res = await repository.getData(
       collection: "users",
-      searchCriteria: {"id": repository.getUserId()},
+      searchCriteria: {
+        "id": customerId,
+      },
     );
 
     if (res.isEmpty) {

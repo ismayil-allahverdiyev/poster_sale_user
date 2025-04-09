@@ -8,10 +8,12 @@ class MessageTextField extends StatelessWidget {
   const MessageTextField({
     super.key,
     required this.controller,
+    required this.onSend,
     this.padding,
   });
 
   final TextEditingController controller;
+  final Function() onSend;
   final EdgeInsets? padding;
 
   @override
@@ -29,11 +31,15 @@ class MessageTextField extends StatelessWidget {
           padding: const EdgeInsets.only(
             right: 8.0,
           ),
-          child: CircleAvatar(
-            backgroundColor: primaryColor,
-            child: Image.asset(
-              Assets.icon_send,
-              scale: 3,
+          child: InkWell(
+            radius: 100,
+            onTap: onSend,
+            child: CircleAvatar(
+              backgroundColor: primaryColor,
+              child: Image.asset(
+                Assets.icon_send,
+                scale: 3,
+              ),
             ),
           ),
         ),

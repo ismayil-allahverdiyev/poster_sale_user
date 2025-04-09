@@ -47,7 +47,7 @@ class Repository {
     return headers;
   }
 
-  getUserId() {
+  String? getUserId() {
     var localStorageController = Get.find<LocalStorageController>();
     var token =
         localStorageController.getStringFromLocal(LocalStorageConst.jwtToken);
@@ -208,25 +208,35 @@ class Repository {
     }
   }
 
-  Future<void> postData({
+  Future<String?> postData({
     required String collection,
     String? documentId, // Optional to specify a document ID
+    String? innerCollection,
     required Map<String, dynamic> data,
   }) async {
     try {
       CollectionReference collectionRef = firestore.collection(collection);
 
-      if (documentId != null) {
-        // Add or update a document with a specific ID
-        await collectionRef.doc(documentId).set(data);
-      } else {
-        // Add a new document with an auto-generated ID
-        await collectionRef.add(data);
-      }
+      if (documentId != null && innerCollection != null) {
+        // Add to subcollection under specific document
+        CollectionReference subColRef =
+            collectionRef.doc(documentId).collection(innerCollection);
 
-      print("Data posted successfully!");
+        DocumentReference subDocRef = await subColRef.add(data);
+        print("Data posted to subcollection with ID: ${subDocRef.id}");
+        return subDocRef.id;
+      } else if (documentId != null) {
+        await collectionRef.doc(documentId).set(data);
+        print("Data posted with custom ID: $documentId");
+        return documentId;
+      } else {
+        DocumentReference docRef = await collectionRef.add(data);
+        print("Data posted with generated ID: ${docRef.id}");
+        return docRef.id;
+      }
     } catch (error) {
       print("Error posting data: $error");
+      return null;
     }
   }
 

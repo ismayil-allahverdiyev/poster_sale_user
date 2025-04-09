@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../data/models/poster/poster_model.dart';
 import '../../data/repository/repository.dart';
 
 class MessagesDetailedController extends GetxController
@@ -8,15 +9,37 @@ class MessagesDetailedController extends GetxController
   MessagesDetailedController({required this.repository});
 
   @override
-  onInit() {
+  onInit() async {
     super.onInit();
-    tabController = TabController(length: tabLength, vsync: this);
-  }
-  // Controllers and variables
+    posterId.value = Get.parameters["posterId"];
+    chatId.value = Get.parameters["chatId"];
+    userId.value = repository.getUserId();
 
-  TabController? tabController;
+    if (posterId.value == null ||
+        chatId.value == null ||
+        userId.value == null) {
+      repository.errorHandler(
+        title: "Error",
+        message: "Something went wrong!",
+      );
+      return;
+    }
+
+    await getPoster();
+  }
+
+  // Controllers
+  var tabController = Rxn<TabController>();
   TextEditingController messageController = TextEditingController();
-  var tabLength = 4;
+
+  // **********************************
+
+  // Variables
+  var posterId = Rxn<String>();
+  var chatId = Rxn<String>();
+  var userId = Rxn<String>();
+  var isLoaded = false.obs;
+  var poster = Rxn<PosterModel>();
 
   var messages = <String>[
     "Hi",
@@ -33,4 +56,38 @@ class MessagesDetailedController extends GetxController
   ].obs;
 
   // **********************************
+
+  // Functions
+  getPoster() async {
+    isLoaded.value = false;
+    try {
+      var response = await repository.getData(
+        collection: "products",
+        documentId: posterId.value!,
+      );
+
+      if (response.isEmpty) {
+        repository.errorHandler(
+          title: "Could not get poster",
+          message: "Poster not found",
+        );
+      } else {
+        poster.value = PosterModel.fromJson(response[0]);
+
+        tabController.value = TabController(
+          length: poster.value!.images.length,
+          vsync: this,
+        );
+      }
+
+      isLoaded.value = true;
+    } catch (e) {
+      isLoaded.value = true;
+
+      repository.errorHandler(
+        title: "Could not get poster",
+        message: e.toString(),
+      );
+    }
+  }
 }
