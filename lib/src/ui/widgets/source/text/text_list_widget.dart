@@ -25,14 +25,19 @@ class TextListWidget extends GetWidget<MessagesDetailedController> {
             ),
           ),
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: controller.messages.length,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return TextBox(
-              index: index,
-              text: controller.messages[index],
+        Obx(
+          () {
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: controller.messageList.length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                var message = controller.messageList[index];
+                return TextBox(
+                  index: index,
+                  message: message,
+                );
+              },
             );
           },
         ),

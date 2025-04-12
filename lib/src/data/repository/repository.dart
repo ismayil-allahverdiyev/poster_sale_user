@@ -208,6 +208,61 @@ class Repository {
     }
   }
 
+  Future<void> liveFetchData({
+    required String collection,
+    String? documentId,
+    String secondCollectionName =
+        'list', // Default to 'list' for nested collections
+    required Function(List<Map<String, dynamic>>) onUpdate,
+    String? sortByField, // Field to sort by
+    bool isDescending = false, // Whether to sort in descending order
+  }) async {
+    try {
+      CollectionReference collectionRef;
+
+      if (documentId == null) {
+        // Listen to the entire collection
+        collectionRef = FirebaseFirestore.instance.collection(collection);
+      } else {
+        // Listen to the nested collection under a specific document
+        collectionRef = FirebaseFirestore.instance
+            .collection(collection)
+            .doc(documentId)
+            .collection(
+                secondCollectionName); // Use the provided second collection name
+      }
+
+      // Listen to changes in the collection in real-time
+      collectionRef.snapshots().listen((QuerySnapshot snapshot) {
+        List<Map<String, dynamic>> results = snapshot.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          return {
+            ...data,
+            'id': doc.id,
+          };
+        }).toList();
+
+        // If a sorting field is provided, sort the results
+        if (sortByField != null) {
+          results.sort((a, b) {
+            // Check if the field exists in the document data
+            if (a[sortByField] is Comparable && b[sortByField] is Comparable) {
+              final comparisonResult = (a[sortByField] as Comparable)
+                  .compareTo(b[sortByField] as Comparable);
+              return isDescending ? -comparisonResult : comparisonResult;
+            }
+            return 0; // If the field doesn't exist or is not comparable, leave as is
+          });
+        }
+
+        // Call the provided callback with the updated data
+        onUpdate(results);
+      });
+    } catch (error) {
+      print("Error fetching live data: $error");
+    }
+  }
+
   Future<String?> postData({
     required String collection,
     String? documentId, // Optional to specify a document ID

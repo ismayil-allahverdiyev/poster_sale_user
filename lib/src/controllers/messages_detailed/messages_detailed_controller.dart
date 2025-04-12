@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poster_sale_user/src/data/models/message/message_model.dart';
 import '../../data/models/poster/poster_model.dart';
 import '../../data/repository/repository.dart';
 
@@ -15,17 +17,12 @@ class MessagesDetailedController extends GetxController
     chatId.value = Get.parameters["chatId"];
     userId.value = repository.getUserId();
 
-    if (posterId.value == null ||
-        chatId.value == null ||
-        userId.value == null) {
-      repository.errorHandler(
-        title: "Error",
-        message: "Something went wrong!",
-      );
+    if (checkNullability()) {
       return;
     }
 
     await getPoster();
+    await getMessages();
   }
 
   // Controllers
@@ -54,6 +51,8 @@ class MessagesDetailedController extends GetxController
     "What did you hear?",
     "I heard that you are a bad person. Is that true? I hope not. If it is, I will have to block you and report you to the authorities",
   ].obs;
+
+  var messageList = <MessageModel>[].obs;
 
   // **********************************
 
@@ -90,4 +89,78 @@ class MessagesDetailedController extends GetxController
       );
     }
   }
+
+  getMessages() async {
+    var response = await repository.liveFetchData(
+      collection: "messages",
+      documentId: chatId.value,
+      sortByField: "timestamp",
+      onUpdate: (List<Map<String, dynamic>> ducuments) {
+        var updatedMessages = ducuments.map((element) {
+          return MessageModel.fromJson(element);
+        }).toList();
+
+        var newMessageList = <MessageModel>[];
+
+        // Check for new messages and only append those that aren't already in the list
+        for (var message in updatedMessages) {
+          // If the message doesn't exist in the current list, append it
+          if (!messageList
+              .any((existingMessage) => existingMessage.id == message.id)) {
+            newMessageList.add(message);
+          }
+        }
+
+        // Add the new messages at the end of the list
+        if (newMessageList.isNotEmpty) {
+          messageList.addAll(newMessageList);
+        }
+      },
+    );
+  }
+
+  sendMessage() async {
+    var textMessage = messageController.text;
+    messageController.clear();
+
+    if (checkNullability()) {
+      return;
+    }
+
+    var messageDocId = await repository.postData(
+      collection: "messages",
+      documentId: chatId.value,
+      innerCollection: "list",
+      data: MessageModel(
+        id: "",
+        senderId: userId.value!,
+        timestamp: Timestamp.now(),
+        text: textMessage,
+        read: false,
+      ).toJson(),
+    );
+
+    if (messageDocId == null) {
+      repository.errorHandler(
+        title: "Message error",
+        message: "Couldn't send your resquest!",
+      );
+    }
+  }
+
+  bool checkNullability() {
+    if (posterId.value == null ||
+        chatId.value == null ||
+        userId.value == null) {
+      repository.errorHandler(
+        title: "Error",
+        message: "Something went wrong!",
+      );
+      return true;
+    }
+
+    return false;
+  }
+
+  // ********************************************
 }

@@ -140,6 +140,7 @@ class ProductController extends GetxController
       documentId: newDocumentId,
       innerCollection: "list",
       data: MessageModel(
+        id: "",
         senderId: customerId.value!,
         timestamp: Timestamp.now(),
         text: messageController.text,

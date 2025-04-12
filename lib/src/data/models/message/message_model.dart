@@ -12,12 +12,14 @@ MessageModel messageModelFromJson(String str) =>
 String messageModelToJson(MessageModel data) => json.encode(data.toJson());
 
 class MessageModel {
+  String id;
   String senderId;
   String text;
   Timestamp timestamp;
   bool read;
 
   MessageModel({
+    required this.id,
     required this.senderId,
     required this.text,
     required this.timestamp,
@@ -25,6 +27,7 @@ class MessageModel {
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) => MessageModel(
+        id: json["id"],
         senderId: json["senderId"],
         text: json["text"],
         timestamp: json["timestamp"],
