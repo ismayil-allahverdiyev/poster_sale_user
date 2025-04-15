@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:poster_sale_user/src/controllers/local_storage/local_storage_controller.dart';
 import 'package:poster_sale_user/src/data/models/user/add_user_model.dart';
 import '../../constants/local_storage.dart';
-import '../../data/provider/api_client.dart';
 import '../../data/repository/repository.dart';
 import '../../routes/app_routes.dart';
 import '../bottom_navbar/bottom_navbar_controller.dart';

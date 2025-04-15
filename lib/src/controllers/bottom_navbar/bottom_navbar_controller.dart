@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:poster_sale_user/src/constants/local_storage.dart';
 import 'package:poster_sale_user/src/controllers/basket_overview/basket_overview_controller.dart';
 import 'package:poster_sale_user/src/controllers/home/home_controller.dart';
-import 'package:poster_sale_user/src/controllers/local_storage/local_storage_controller.dart';
 import 'package:poster_sale_user/src/controllers/message_overview/message_overview_controller.dart';
 import 'package:poster_sale_user/src/controllers/profile/profile_controller.dart';
 import 'package:poster_sale_user/src/ui/baskets_overview/baskets_overview_page.dart';
@@ -13,7 +9,6 @@ import 'package:poster_sale_user/src/ui/home/home_page.dart';
 import 'package:poster_sale_user/src/ui/message_overview/message_overview_page.dart';
 import 'package:poster_sale_user/src/ui/profile/profile_page.dart';
 import '../../data/repository/repository.dart';
-import '../../routes/app_routes.dart';
 
 class BottomNavBarController extends GetxController {
   final Repository repository;

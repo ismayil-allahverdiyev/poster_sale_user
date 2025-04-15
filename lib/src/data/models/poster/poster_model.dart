@@ -33,7 +33,6 @@ class PosterModel {
   });
 
   factory PosterModel.fromJson(Map<String, dynamic> json) {
-    var sth = json;
     return PosterModel(
       id: json["id"],
       title: json["title"],

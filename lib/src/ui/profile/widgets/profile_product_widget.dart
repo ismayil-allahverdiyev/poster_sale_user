@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poster_sale_user/src/data/models/poster/poster_model.dart';
 import 'package:poster_sale_user/src/routes/app_routes.dart';
-import 'package:poster_sale_user/src/ui/widgets/source/custom_icon_button.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_shimmer_wrapper_widget.dart';
-
-import '../../../constants/assets.dart';
 import '../../../controllers/profile/profile_controller.dart';
 import '../../theme/app_colors.dart';
 

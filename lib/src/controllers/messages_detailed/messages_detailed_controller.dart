@@ -91,7 +91,7 @@ class MessagesDetailedController extends GetxController
   }
 
   getMessages() async {
-    var response = await repository.liveFetchData(
+    await repository.liveFetchData(
       collection: "messages",
       documentId: chatId.value,
       sortByField: "timestamp",

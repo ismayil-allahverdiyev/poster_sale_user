@@ -11,7 +11,6 @@ import '../../constants/assets.dart';
 import '../theme/app_colors.dart';
 import 'source/custom_icon_button.dart';
 import 'source/custom_tabbar_view.dart';
-import 'package:shimmer/shimmer.dart';
 
 class PosterAnimatedWidget extends GetWidget<HomeController> {
   const PosterAnimatedWidget({super.key});
@@ -228,12 +227,6 @@ class _PosterWidgetState extends State<PosterWidget> {
     // Randomly positioned text container
     double textVerticalPosition =
         random.nextDouble() * (Get.width * 1.2 - (Get.width * 0.05));
-
-    // Calculate bounds for text container to avoid collision with the full white container
-    double fullWhiteTop = fullWhiteCorner.y == 1.0 ? 0 : 0;
-    double fullWhiteBottom = fullWhiteCorner.y == 1.0
-        ? fullWhiteTop + fullBoxHeight
-        : Get.width * 1.2;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,

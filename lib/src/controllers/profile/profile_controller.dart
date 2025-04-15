@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poster_sale_user/src/data/models/user/user_model.dart';
-import '../../data/models/poster/poster_model.dart';
 import '../../data/repository/repository.dart';
 
 class ProfileController extends GetxController

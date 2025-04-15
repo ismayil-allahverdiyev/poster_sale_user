@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../constants/assets.dart';
 import '../../../controllers/login/login_controller.dart';
-import '../../../routes/app_routes.dart';
 import '../../widgets/source/custom_large_button_widget.dart';
 import '../../widgets/source/custom_simple_text_field.dart';
 import '../../widgets/source/custom_text_button_widget.dart';
-import 'lock_textfield_widget.dart';
 
 class ForgetPasswordBodyWidget extends GetWidget<LoginController> {
   const ForgetPasswordBodyWidget({

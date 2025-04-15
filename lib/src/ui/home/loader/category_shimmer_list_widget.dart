@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_shimmer_wrapper_widget.dart';
-import 'package:shimmer/shimmer.dart';
 import '../../theme/app_colors.dart';
 
 class CategoryShimmerListWidget extends StatelessWidget {

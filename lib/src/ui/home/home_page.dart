@@ -5,10 +5,7 @@ import 'package:poster_sale_user/src/constants/assets.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_icon_button.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_scaffold.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_text_field.dart';
-
 import '../../controllers/home/home_controller.dart';
-import '../../data/models/poster/poster_model.dart';
-import '../theme/app_colors.dart';
 import '../widgets/poster_animated_widget.dart';
 import 'widgets/category_selection_widget.dart';
 import 'widgets/most_viewed_title_widget.dart';

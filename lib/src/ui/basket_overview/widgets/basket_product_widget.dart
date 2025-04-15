@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_icon_button.dart';
 
 import '../../../constants/assets.dart';

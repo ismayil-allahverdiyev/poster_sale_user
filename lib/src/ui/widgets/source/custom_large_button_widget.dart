@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:poster_sale_user/src/routes/app_routes.dart';
 import '../../theme/app_colors.dart';
 
 class CustomLargeButtonWidget extends StatelessWidget {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:poster_sale_user/src/data/utils/device_utils.dart';
 import 'package:poster_sale_user/src/ui/theme/app_colors.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_app_bar.dart';

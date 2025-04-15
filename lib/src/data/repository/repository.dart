@@ -10,11 +10,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import '../../../src/ui/theme/app_colors.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../constants/endpoints.dart';
 import '../../constants/local_storage.dart';
 import '../../controllers/local_storage/local_storage_controller.dart';
 import '../../routes/app_routes.dart';
-import '../provider/api_client.dart';
 
 class Repository {
   final FirebaseFirestore firestore;
@@ -203,7 +201,10 @@ class Repository {
       // Remove duplicates (if any)
       return results.toSet().toList();
     } catch (error) {
-      print("Error fetching data: $error");
+      errorHandler(
+        title: "Encountered a problem",
+        message: error.toString(),
+      );
       return [];
     }
   }
@@ -259,7 +260,10 @@ class Repository {
         onUpdate(results);
       });
     } catch (error) {
-      print("Error fetching live data: $error");
+      errorHandler(
+        title: "Encountered a problem",
+        message: error.toString(),
+      );
     }
   }
 

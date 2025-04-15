@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:poster_sale_user/src/controllers/messages_detailed/messages_detailed_controller.dart';
 import 'package:poster_sale_user/src/ui/theme/app_colors.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_shimmer_wrapper_widget.dart';
-import '../../../constants/assets.dart';
 
 class ImageCarouselInChatWidget extends GetWidget<MessagesDetailedController> {
   const ImageCarouselInChatWidget({
