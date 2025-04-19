@@ -116,10 +116,14 @@ class ProductController extends GetxController
     var newDocumentId = await repository.postData(
       collection: "chats",
       data: ChatModel(
+        id: "",
         customerId: customerId.value!,
         timestamp: Timestamp.now(),
         lastMessage: messageController.text,
         productId: poster.value!.id,
+        productImage: poster.value!.images[0],
+        productTitle: poster.value!.title,
+        chatStatus: ChatStatus.normal,
         read: false,
       ).toJson(),
     );
@@ -153,7 +157,11 @@ class ProductController extends GetxController
         title: "Message error",
         message: "Couldn't send your resquest!",
       );
+
+      return;
     }
+
+    openMessagesPage();
   }
 
   openMessagesPage() async {

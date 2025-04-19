@@ -52,7 +52,7 @@ class CustomAppBar extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "Kuwait, Kuwait city",
+                        "Dortmund, Germany",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: textColor,
