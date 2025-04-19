@@ -102,7 +102,7 @@ class ProductController extends GetxController
       collection: "chats",
       searchCriteria: {
         "customerId": customerId.value!,
-        "productId": poster.value!.id,
+        "productId true": poster.value!.id,
       },
     );
 

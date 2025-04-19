@@ -146,6 +146,7 @@ class Repository {
         String text = entry.value;
 
         if (fields.length > 1 && fields[1] == "true") {
+          // Adds second layer of search
           secondRound.add({
             "field": entry.key,
             "text": text,
