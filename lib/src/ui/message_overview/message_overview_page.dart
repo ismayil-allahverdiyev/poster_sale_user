@@ -15,21 +15,35 @@ class MessageOverviewPage extends GetWidget<MessageOverviewController> {
         Expanded(
           child: Obx(
             () {
-              return ListView.separated(
-                itemCount: controller.chatList.length,
-                padding: const EdgeInsets.only(bottom: 200),
-                separatorBuilder: (context, index) {
-                  return const Divider(
-                    height: 1,
-                    color: lightGreyColor,
-                  );
-                },
-                itemBuilder: (context, index) {
-                  return MessageOverviewWidget(
-                    chat: controller.chatList[index],
-                  );
-                },
-              );
+              return !controller.isLoaded.value
+                  ? ListView.separated(
+                      itemCount: 5,
+                      padding: const EdgeInsets.only(bottom: 200),
+                      separatorBuilder: (context, index) {
+                        return const Divider(
+                          height: 1,
+                          color: lightGreyColor,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        return const MessageOverviewLoader();
+                      },
+                    )
+                  : ListView.separated(
+                      itemCount: controller.chatList.length,
+                      padding: const EdgeInsets.only(bottom: 200),
+                      separatorBuilder: (context, index) {
+                        return const Divider(
+                          height: 1,
+                          color: lightGreyColor,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        return MessageOverviewWidget(
+                          chat: controller.chatList[index],
+                        );
+                      },
+                    );
             },
           ),
         )

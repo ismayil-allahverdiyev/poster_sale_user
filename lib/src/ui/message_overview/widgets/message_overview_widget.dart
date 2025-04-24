@@ -109,3 +109,41 @@ class ChatProductImageLoader extends StatelessWidget {
     );
   }
 }
+
+class MessageOverviewLoader extends StatelessWidget {
+  const MessageOverviewLoader({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const ListTile(
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 8,
+      ),
+      leading: ChatProductImageLoader(),
+      title: CustomTextLoader(),
+      subtitle: CustomTextLoader(),
+    );
+  }
+}
+
+class CustomTextLoader extends StatelessWidget {
+  const CustomTextLoader({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomShimmer(
+      child: Container(
+        height: 10,
+        width: Get.width * 0.5,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          color: lightGreyColor,
+        ),
+      ),
+    );
+  }
+}
