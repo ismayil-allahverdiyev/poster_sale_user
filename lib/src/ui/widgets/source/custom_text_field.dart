@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:poster_sale_user/src/ui/theme/app_colors.dart';
+import '../../theme/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final bool isRounded;
@@ -19,6 +19,7 @@ class CustomTextField extends StatelessWidget {
   final int? minLength;
   final int? maxLines;
   final bool isRequired;
+  final bool enabled;
   final Function(String)? onChanged;
   const CustomTextField({
     super.key,
@@ -39,6 +40,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLines,
     this.isRequired = false,
     this.onChanged,
+    this.enabled = true,
   });
 
   @override
@@ -56,6 +58,7 @@ class CustomTextField extends StatelessWidget {
         maxLength: maxLength,
         maxLengthEnforcement: MaxLengthEnforcement.none,
         maxLines: maxLines,
+        enabled: enabled,
         validator: (value) {
           if (isRequired && value!.isEmpty) {
             return "This field is required";

@@ -70,7 +70,7 @@ class ProductPage extends GetView<ProductController> {
                       height: 2,
                     ),
                     MessageTextField(
-                      controller: controller.messageController,
+                      textController: controller.messageController,
                       onSend: controller.onSendFirstMessage,
                     ),
                     const SizedBox(

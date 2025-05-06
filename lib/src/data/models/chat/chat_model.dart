@@ -38,7 +38,7 @@ class ChatModel {
         lastMessage: json["lastMessage"],
         timestamp: json["timestamp"],
         read: json["read"],
-        chatStatus: ChatStatus.values[json["chatStatus"]],
+        chatStatus: ChatStatus.values[0 - json["chatStatus"] as int],
       );
 
   Map<String, dynamic> toJson() => {

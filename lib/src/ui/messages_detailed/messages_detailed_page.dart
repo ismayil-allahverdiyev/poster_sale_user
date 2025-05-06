@@ -34,7 +34,7 @@ class MessagesDetailedPage extends GetView<MessagesDetailedController> {
         Column(
           children: [
             MessageTextField(
-              controller: controller.messageController,
+              textController: controller.messageController,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               onSend: controller.sendMessage,
             ),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poster_sale_user/src/data/models/message/message_model.dart';
+import '../../data/models/chat/chat_model.dart';
 import '../../data/models/poster/poster_model.dart';
 import '../../data/repository/repository.dart';
 
@@ -15,6 +16,8 @@ class MessagesDetailedController extends GetxController
     super.onInit();
     posterId.value = Get.parameters["posterId"];
     chatId.value = Get.parameters["chatId"];
+    chatStatus.value =
+        ChatStatus.values[int.parse(Get.parameters["chatStatus"] ?? "0")];
     userId.value = repository.getUserId();
 
     if (checkNullability()) {
@@ -34,6 +37,7 @@ class MessagesDetailedController extends GetxController
   // Variables
   var posterId = Rxn<String>();
   var chatId = Rxn<String>();
+  var chatStatus = ChatStatus.normal.obs;
   var userId = Rxn<String>();
   var isLoaded = false.obs;
   var poster = Rxn<PosterModel>();
@@ -120,10 +124,10 @@ class MessagesDetailedController extends GetxController
   }
 
   sendMessage() async {
-    var textMessage = messageController.text;
+    var textMessage = messageController.text.trimLeft();
     messageController.clear();
 
-    if (checkNullability()) {
+    if (checkNullability() || textMessage.isEmpty) {
       return;
     }
 

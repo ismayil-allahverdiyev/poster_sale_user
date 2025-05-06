@@ -24,6 +24,7 @@ class ProductController extends GetxController
   var isLoaded = false.obs;
   var hasMessaged = false.obs;
   var chatId = Rxn<String>();
+  var chatStatus = ChatStatus.normal.obs;
   var customerId = Rxn<String>();
 
   var poster = Rxn<PosterModel>();
@@ -108,6 +109,7 @@ class ProductController extends GetxController
 
     if (chatData.isNotEmpty) {
       chatId.value = chatData[0]["id"];
+      chatStatus.value = ChatStatus.values[chatData[0]["chatStatus"] as int];
       hasMessaged.value = true;
     }
   }
@@ -170,6 +172,7 @@ class ProductController extends GetxController
       parameters: {
         "posterId": poster.value!.id,
         "chatId": chatId.value!,
+        "chatStatus": chatStatus.value.index.toString(),
       },
     );
   }
