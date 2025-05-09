@@ -15,6 +15,7 @@ class ChatModel {
   String lastMessage;
   Timestamp timestamp;
   bool read;
+  bool readByAdmin;
   ChatStatus chatStatus;
 
   ChatModel({
@@ -26,6 +27,7 @@ class ChatModel {
     required this.lastMessage,
     required this.timestamp,
     required this.read,
+    required this.readByAdmin,
     required this.chatStatus,
   });
 
@@ -37,7 +39,8 @@ class ChatModel {
         productTitle: json["productTitle"],
         lastMessage: json["lastMessage"],
         timestamp: json["timestamp"],
-        read: json["read"],
+        read: json["read"] ?? false,
+        readByAdmin: json["readByAdmin"] ?? false,
         chatStatus: ChatStatus.values[0 - json["chatStatus"] as int],
       );
 
@@ -49,6 +52,7 @@ class ChatModel {
         "lastMessage": lastMessage,
         "timestamp": timestamp,
         "read": read,
+        "readByAdmin": readByAdmin,
         "chatStatus": chatStatus.index,
       };
 }

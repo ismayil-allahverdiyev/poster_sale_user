@@ -126,7 +126,8 @@ class ProductController extends GetxController
         productImage: poster.value!.images[0],
         productTitle: poster.value!.title,
         chatStatus: ChatStatus.normal,
-        read: false,
+        read: true,
+        readByAdmin: false,
       ).toJson(),
     );
 

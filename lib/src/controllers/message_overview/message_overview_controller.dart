@@ -32,6 +32,8 @@ class MessageOverviewController extends GetxController
     try {
       await repository.liveFetchData(
         collection: "chats",
+        isDescending: true,
+        sortByField: "timestamp",
         onUpdate: (response) {
           if (response.isEmpty) {
             repository.errorHandler(

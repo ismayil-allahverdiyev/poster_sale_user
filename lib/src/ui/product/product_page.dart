@@ -69,7 +69,7 @@ class ProductPage extends GetView<ProductController> {
                     const SizedBox(
                       height: 2,
                     ),
-                    MessageTextField(
+                    CustomMessageTextField(
                       textController: controller.messageController,
                       onSend: controller.onSendFirstMessage,
                     ),

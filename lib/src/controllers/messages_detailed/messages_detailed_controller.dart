@@ -31,6 +31,7 @@ class MessagesDetailedController extends GetxController
   // Controllers
   var tabController = Rxn<TabController>();
   TextEditingController messageController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
 
   // **********************************
 
@@ -95,59 +96,150 @@ class MessagesDetailedController extends GetxController
   }
 
   getMessages() async {
-    await repository.liveFetchData(
-      collection: "messages",
-      documentId: chatId.value,
-      sortByField: "timestamp",
-      onUpdate: (List<Map<String, dynamic>> ducuments) {
-        var updatedMessages = ducuments.map((element) {
-          return MessageModel.fromJson(element);
-        }).toList();
+    try {
+      await setChatRead();
 
-        var newMessageList = <MessageModel>[];
+      await repository.liveFetchData(
+        collection: "messages",
+        documentId: chatId.value,
+        sortByField: "timestamp",
+        onUpdate: (List<Map<String, dynamic>> ducuments) async {
+          var updatedMessages = ducuments.map((element) {
+            return MessageModel.fromJson(element);
+          }).toList();
 
-        // Check for new messages and only append those that aren't already in the list
-        for (var message in updatedMessages) {
-          // If the message doesn't exist in the current list, append it
-          if (!messageList
-              .any((existingMessage) => existingMessage.id == message.id)) {
-            newMessageList.add(message);
+          var newMessageList = <MessageModel>[];
+
+          // Check for new messages and only append those that aren't already in the list
+          for (var message in updatedMessages) {
+            // If the message doesn't exist in the current list, append it
+            if (!messageList
+                .any((existingMessage) => existingMessage.id == message.id)) {
+              newMessageList.add(message);
+            }
           }
-        }
 
-        // Add the new messages at the end of the list
-        if (newMessageList.isNotEmpty) {
-          messageList.addAll(newMessageList);
-        }
-      },
-    );
+          // Add the new messages at the end of the list
+          if (newMessageList.isNotEmpty) {
+            messageList.addAll(newMessageList);
+
+            if (newMessageList.last.senderId != userId.value) {
+              await setChatRead();
+            }
+
+            await Future.delayed(const Duration(milliseconds: 100));
+            scrollToBottom();
+          }
+        },
+      );
+    } catch (e) {
+      repository.errorHandler(
+        title: "Could not get messages",
+        message: e.toString(),
+      );
+    }
   }
 
   sendMessage() async {
-    var textMessage = messageController.text.trimLeft();
-    messageController.clear();
+    try {
+      var textMessage = messageController.text.trimLeft();
+      messageController.clear();
 
-    if (checkNullability() || textMessage.isEmpty) {
-      return;
-    }
+      if (checkNullability() || textMessage.isEmpty) {
+        return;
+      }
 
-    var messageDocId = await repository.postData(
-      collection: "messages",
-      documentId: chatId.value,
-      innerCollection: "list",
-      data: MessageModel(
+      // Send message to the user (Leave message Id empty if it is a new message)
+      var newMessage = MessageModel(
         id: "",
         senderId: userId.value!,
         timestamp: Timestamp.now(),
         text: textMessage,
         read: false,
-      ).toJson(),
-    );
+      );
 
-    if (messageDocId == null) {
+      var messageDocId = await repository.postData(
+        collection: "messages",
+        documentId: chatId.value,
+        innerCollection: "list",
+        data: newMessage.toJson(),
+      );
+
+      if (messageDocId == null) {
+        repository.errorHandler(
+          title: "Message error",
+          message: "Couldn't send your resquest!",
+        );
+      } else {
+        newMessage.id = messageDocId;
+        updateLastMessage(message: newMessage);
+      }
+    } catch (e) {
       repository.errorHandler(
         title: "Message error",
-        message: "Couldn't send your resquest!",
+        message: e.toString(),
+      );
+    }
+  }
+
+  setChatRead() async {
+    try {
+      if (checkNullability()) {
+        return;
+      }
+
+      var requestId = await repository.postData(
+        collection: "chats",
+        documentId: chatId.value!,
+        data: {
+          "read": true,
+        },
+      );
+
+      if (requestId == null) {
+        repository.errorHandler(
+          title: "Message error",
+          message: "Couldn't send your resquest!",
+        );
+      }
+    } catch (e) {
+      repository.errorHandler(
+        title: "Message error",
+        message: e.toString(),
+      );
+    }
+  }
+
+  updateLastMessage({required MessageModel message}) async {
+    try {
+      if (checkNullability()) {
+        return;
+      }
+
+      var requestId = await repository.postData(
+        collection: "chats",
+        documentId: chatId.value!,
+        data: {
+          "lastMessage": message.text,
+          "lastMessageId": message.id,
+          "readByAdmin": false,
+          "read": true,
+          "timestamp": message.timestamp,
+        },
+      );
+
+      if (requestId == null) {
+        repository.errorHandler(
+          title: "Message error",
+          message: "Couldn't send your resquest!",
+        );
+
+        return;
+      }
+    } catch (e) {
+      repository.errorHandler(
+        title: "Message error",
+        message: e.toString(),
       );
     }
   }
@@ -165,6 +257,28 @@ class MessagesDetailedController extends GetxController
 
     return false;
   }
+  // ********************************************
 
+  // UI related functions
+
+  void scrollToBottom() {
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+  // ********************************************
+
+  // Dispose
+  @override
+  void onClose() {
+    tabController.value?.dispose();
+    scrollController.dispose();
+    messageController.dispose();
+    super.onClose();
+  }
   // ********************************************
 }

@@ -20,47 +20,66 @@ class MessageTextField extends GetWidget<MessagesDetailedController> {
 
   @override
   Widget build(BuildContext context) {
+    return Obx(() {
+      final isEnabled = controller.chatStatus.value != ChatStatus.blocked;
+      return CustomMessageTextField(
+        textController: textController,
+        onSend: onSend,
+        padding: padding,
+        enabled: isEnabled,
+        sendButtonColor:
+            isEnabled ? primaryColor : primaryColor.withOpacity(0.3),
+      );
+    });
+  }
+}
+
+class CustomMessageTextField extends StatelessWidget {
+  const CustomMessageTextField({
+    super.key,
+    required this.textController,
+    required this.onSend,
+    this.padding,
+    this.enabled = true,
+    this.sendButtonColor,
+  });
+
+  final TextEditingController textController;
+  final Function() onSend;
+  final EdgeInsets? padding;
+  final bool enabled;
+  final Color? sendButtonColor;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: padding ?? const EdgeInsets.all(0),
-      child: Obx(
-        () {
-          return CustomTextField(
-            hintText: "Type your question...",
-            controller: textController,
-            enabled: controller.chatStatus.value != ChatStatus.blocked,
-            hintStyle: const TextStyle(
-              color: lightBlueTextColor,
-              fontSize: 14,
-            ),
-            suffixIcon: Padding(
-              padding: const EdgeInsets.only(
-                right: 8.0,
-              ),
-              child: SizedBox(
-                child: InkWell(
-                  onTap: onSend,
-                  borderRadius: BorderRadius.circular(1000),
-                  splashColor: Colors.transparent,
-                  child: Obx(
-                    () {
-                      return CircleAvatar(
-                        backgroundColor:
-                            controller.chatStatus.value != ChatStatus.blocked
-                                ? primaryColor
-                                : primaryColor.withOpacity(0.3),
-                        child: Image.asset(
-                          Assets.icon_send,
-                          scale: 3,
-                        ),
-                      );
-                    },
-                  ),
+      padding: padding ?? EdgeInsets.zero,
+      child: CustomTextField(
+        hintText: "Type your question...",
+        controller: textController,
+        enabled: enabled,
+        hintStyle: const TextStyle(
+          color: lightBlueTextColor,
+          fontSize: 14,
+        ),
+        suffixIcon: Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: SizedBox(
+            child: InkWell(
+              onTap: enabled ? onSend : null,
+              borderRadius: BorderRadius.circular(1000),
+              splashColor: Colors.transparent,
+              child: CircleAvatar(
+                backgroundColor: sendButtonColor ?? primaryColor,
+                child: Image.asset(
+                  Assets.icon_send,
+                  scale: 3,
                 ),
               ),
             ),
-            isRounded: true,
-          );
-        },
+          ),
+        ),
+        isRounded: true,
       ),
     );
   }

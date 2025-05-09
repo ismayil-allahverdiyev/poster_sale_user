@@ -286,7 +286,7 @@ class Repository {
         print("Data posted to subcollection with ID: ${subDocRef.id}");
         return subDocRef.id;
       } else if (documentId != null) {
-        await collectionRef.doc(documentId).set(data);
+        await collectionRef.doc(documentId).update(data);
         print("Data posted with custom ID: $documentId");
         return documentId;
       } else {

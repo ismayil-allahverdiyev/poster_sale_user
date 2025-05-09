@@ -25,6 +25,7 @@ class MessagesDetailedPage extends GetView<MessagesDetailedController> {
         ),
         Expanded(
           child: ListView(
+            controller: controller.scrollController,
             children: const [
               ImageCarouselInChatWidget(),
               TextListWidget(),
