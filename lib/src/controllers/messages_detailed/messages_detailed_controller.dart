@@ -43,20 +43,6 @@ class MessagesDetailedController extends GetxController
   var isLoaded = false.obs;
   var poster = Rxn<PosterModel>();
 
-  var messages = <String>[
-    "Hi",
-    "Hello",
-    "How are you?",
-    "I am fine",
-    "How is work going?",
-    "It is going well you know, just the usual",
-    "That is good to hear",
-    "Yes, it is",
-    "I heard something about you that I did not like",
-    "What did you hear?",
-    "I heard that you are a bad person. Is that true? I hope not. If it is, I will have to block you and report you to the authorities",
-  ].obs;
-
   var messageList = <MessageModel>[].obs;
 
   // **********************************
@@ -83,15 +69,13 @@ class MessagesDetailedController extends GetxController
           vsync: this,
         );
       }
-
-      isLoaded.value = true;
     } catch (e) {
-      isLoaded.value = true;
-
       repository.errorHandler(
         title: "Could not get poster",
         message: e.toString(),
       );
+    } finally {
+      isLoaded.value = true;
     }
   }
 
@@ -99,11 +83,13 @@ class MessagesDetailedController extends GetxController
     try {
       await setChatRead();
 
+      // Fetch the messages from the repository
       await repository.liveFetchData(
         collection: "messages",
         documentId: chatId.value,
         sortByField: "timestamp",
         onUpdate: (List<Map<String, dynamic>> ducuments) async {
+          // Handle the response
           var updatedMessages = ducuments.map((element) {
             return MessageModel.fromJson(element);
           }).toList();
@@ -124,6 +110,7 @@ class MessagesDetailedController extends GetxController
             messageList.addAll(newMessageList);
 
             if (newMessageList.last.senderId != userId.value) {
+              // If the last message is not from the user, set the chat as read
               await setChatRead();
             }
 
@@ -262,12 +249,16 @@ class MessagesDetailedController extends GetxController
   // UI related functions
 
   void scrollToBottom() {
-    if (scrollController.hasClients) {
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+    try {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    } catch (e) {
+      print("Error scrolling to bottom: $e");
     }
   }
   // ********************************************

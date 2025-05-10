@@ -97,74 +97,88 @@ class ProductController extends GetxController
   }
 
   getChatId() async {
-    checkBasics();
+    try {
+      checkBasics();
 
-    var chatData = await repository.getData(
-      collection: "chats",
-      searchCriteria: {
-        "customerId": customerId.value!,
-        "productId true": poster.value!.id,
-      },
-    );
+      var chatData = await repository.getData(
+        collection: "chats",
+        searchCriteria: {
+          "customerId": customerId.value!,
+          "productId true": poster.value!.id,
+        },
+      );
 
-    if (chatData.isNotEmpty) {
-      chatId.value = chatData[0]["id"];
-      chatStatus.value = ChatStatus.values[chatData[0]["chatStatus"] as int];
-      hasMessaged.value = true;
+      if (chatData.isNotEmpty) {
+        chatId.value = chatData[0]["id"];
+        chatStatus.value = ChatStatus.values[chatData[0]["chatStatus"] as int];
+        hasMessaged.value = true;
+      }
+    } catch (e) {
+      repository.errorHandler(
+        title: "Could not get chat",
+        message: e.toString(),
+      );
     }
   }
 
   onSendFirstMessage() async {
-    var newDocumentId = await repository.postData(
-      collection: "chats",
-      data: ChatModel(
-        id: "",
-        customerId: customerId.value!,
-        timestamp: Timestamp.now(),
-        lastMessage: messageController.text,
-        productId: poster.value!.id,
-        productImage: poster.value!.images[0],
-        productTitle: poster.value!.title,
-        chatStatus: ChatStatus.normal,
-        read: true,
-        readByAdmin: false,
-      ).toJson(),
-    );
-
-    if (newDocumentId == null) {
-      repository.errorHandler(
-        title: "Message error",
-        message: "Couldn't send your resquest!",
-      );
-      return;
-    }
-
-    hasMessaged.value = true;
-    chatId.value = newDocumentId;
-
-    var messageDocId = await repository.postData(
-      collection: "messages",
-      documentId: newDocumentId,
-      innerCollection: "list",
-      data: MessageModel(
-        id: "",
-        senderId: customerId.value!,
-        timestamp: Timestamp.now(),
-        text: messageController.text,
-        read: false,
-      ).toJson(),
-    );
-
-    if (messageDocId == null) {
-      repository.errorHandler(
-        title: "Message error",
-        message: "Couldn't send your resquest!",
+    try {
+      var newDocumentId = await repository.postData(
+        collection: "chats",
+        data: ChatModel(
+          id: "",
+          customerId: customerId.value!,
+          timestamp: Timestamp.now(),
+          lastMessage: messageController.text,
+          productId: poster.value!.id,
+          productImage: poster.value!.images[0],
+          productTitle: poster.value!.title,
+          chatStatus: ChatStatus.normal,
+          read: true,
+          readByAdmin: false,
+        ).toJson(),
       );
 
-      return;
-    }
+      if (newDocumentId == null) {
+        repository.errorHandler(
+          title: "Message error",
+          message: "Couldn't send your resquest!",
+        );
+        return;
+      }
 
-    openMessagesPage();
+      hasMessaged.value = true;
+      chatId.value = newDocumentId;
+
+      var messageDocId = await repository.postData(
+        collection: "messages",
+        documentId: newDocumentId,
+        innerCollection: "list",
+        data: MessageModel(
+          id: "",
+          senderId: customerId.value!,
+          timestamp: Timestamp.now(),
+          text: messageController.text,
+          read: false,
+        ).toJson(),
+      );
+
+      if (messageDocId == null) {
+        repository.errorHandler(
+          title: "Message error",
+          message: "Couldn't send your resquest!",
+        );
+
+        return;
+      }
+
+      openMessagesPage();
+    } catch (e) {
+      repository.errorHandler(
+        title: "Message error",
+        message: e.toString(),
+      );
+    }
   }
 
   openMessagesPage() async {
@@ -177,6 +191,15 @@ class ProductController extends GetxController
       },
     );
   }
+  // ***********************************************
 
-  // **********************************
+  // Dispose
+  @override
+  void onClose() {
+    tabController?.dispose();
+    messageController.dispose();
+    super.onClose();
+  }
+
+  // ***********************************************
 }

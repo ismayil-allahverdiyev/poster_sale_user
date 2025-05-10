@@ -30,17 +30,20 @@ class MessageOverviewController extends GetxController
   getChatList() async {
     isLoaded.value = false;
     try {
+      // Fetch the chat list from the repository
       await repository.liveFetchData(
         collection: "chats",
         isDescending: true,
         sortByField: "timestamp",
         onUpdate: (response) {
+          // Handle the response
           if (response.isEmpty) {
             repository.errorHandler(
               title: "Could not get chat list",
               message: "No chats found",
             );
           } else {
+            // Map the response to a list of ChatModel
             chatList.value = List<ChatModel>.from(
                 response.map((x) => ChatModel.fromJson(x)).toList());
           }

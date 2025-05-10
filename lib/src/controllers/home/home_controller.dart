@@ -30,6 +30,7 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
   TabController? tabController;
   FocusNode searchFocusNode = FocusNode();
   TextEditingController searchController = TextEditingController();
+  Timer? timer;
   var isFocused = false.obs;
   var isSearchIsOn = false.obs;
 
@@ -44,11 +45,18 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
   // init functions
 
   getCategories() async {
-    var res = await repository.getData(collection: "categories");
+    try {
+      var res = await repository.getData(collection: "categories");
 
-    categories.value = res.map((e) => CategoryModel.fromJson(e)).toList();
+      categories.value = res.map((e) => CategoryModel.fromJson(e)).toList();
 
-    categories.refresh();
+      categories.refresh();
+    } catch (e) {
+      repository.errorHandler(
+        title: "Could not get categories",
+        message: e.toString(),
+      );
+    }
   }
 
   setTabController(int tabLength) {
@@ -60,23 +68,30 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
 
   // Functions
   void animate({required bool isRight}) {
-    if (isRight) {
-      if (tabController!.index != tabController!.length - 1) {
-        tabController!.animateTo(tabController!.index + 1);
+    try {
+      if (isRight) {
+        if (tabController!.index != tabController!.length - 1) {
+          tabController!.animateTo(tabController!.index + 1);
+        } else {
+          tabController!.animateTo(0);
+        }
       } else {
-        tabController!.animateTo(0);
+        if (tabController!.index != 0) {
+          tabController!.animateTo(tabController!.index - 1);
+        } else {
+          tabController!.animateTo(tabController!.length - 1);
+        }
       }
-    } else {
-      if (tabController!.index != 0) {
-        tabController!.animateTo(tabController!.index - 1);
-      } else {
-        tabController!.animateTo(tabController!.length - 1);
-      }
+    } catch (e) {
+      repository.errorHandler(
+        title: "Could not animate",
+        message: e.toString(),
+      );
     }
   }
 
   void setAutoScroll() {
-    Timer.periodic(
+    timer = Timer.periodic(
       const Duration(seconds: 4),
       (timer) {
         animate(isRight: true);
@@ -111,35 +126,61 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
   }
 
   getPosters() async {
-    var res = await repository.getData(
-      collection: "products",
-      orderField: "created_at",
-      isOrderDescendant: true,
-    );
+    try {
+      var res = await repository.getData(
+        collection: "products",
+        orderField: "created_at",
+        isOrderDescendant: true,
+      );
 
-    allPosters.value = res.map((e) => PosterModel.fromJson(e)).toList();
+      allPosters.value = res.map((e) => PosterModel.fromJson(e)).toList();
 
-    allPosters.refresh();
-    setTabController(allPosters.length);
+      allPosters.refresh();
+      setTabController(allPosters.length);
+    } catch (e) {
+      repository.errorHandler(
+        title: "Could not get posters",
+        message: e.toString(),
+      );
+    }
   }
 
   searchPosters() async {
-    var mappedSearchCategories = {};
-    for (int i = 0; i < selectedCategories.length; i++) {
-      mappedSearchCategories["category_id $i"] = selectedCategories[i];
+    try {
+      var mappedSearchCategories = {};
+      for (int i = 0; i < selectedCategories.length; i++) {
+        mappedSearchCategories["category_id $i"] = selectedCategories[i];
+      }
+
+      var res = await repository.getData(
+        collection: "products",
+        searchCriteria: {
+          "title true": searchController.text,
+          ...mappedSearchCategories,
+        },
+      );
+
+      foundPosters.value = res.map((e) => PosterModel.fromJson(e)).toList();
+
+      foundPosters.refresh();
+    } catch (e) {
+      repository.errorHandler(
+        title: "Could not get posters",
+        message: e.toString(),
+      );
     }
-
-    var res = await repository.getData(
-      collection: "products",
-      searchCriteria: {
-        "title true": searchController.text,
-        ...mappedSearchCategories,
-      },
-    );
-
-    foundPosters.value = res.map((e) => PosterModel.fromJson(e)).toList();
-
-    foundPosters.refresh();
   }
+  // ****************************************************
+
+  // Dispose
+  @override
+  void onClose() {
+    super.onClose();
+    timer?.cancel();
+    searchFocusNode.dispose();
+    searchController.dispose();
+    tabController?.dispose();
+  }
+
   // ****************************************************
 }
