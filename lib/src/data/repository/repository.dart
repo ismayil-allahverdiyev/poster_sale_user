@@ -93,6 +93,7 @@ class Repository {
   Future<List<Map<String, dynamic>>> getData({
     required String collection,
     String? documentId,
+    String? innerCollection, // Optional for nested collections
     Map<String, String>? searchCriteria, // Map of fields and search texts
     String? orderField, // Field to order by
     bool isOrderDescendant = true, // Order by descending or ascending
@@ -102,17 +103,32 @@ class Repository {
 
       // If a specific documentId is provided, fetch that document
       if (documentId != null) {
-        DocumentSnapshot docSnapshot =
-            await collectionRef.doc(documentId).get();
-        if (docSnapshot.exists) {
-          return [
-            {
-              ...(docSnapshot.data() as Map<String, dynamic>),
-              'id': docSnapshot.id,
-            }
-          ];
+        if (innerCollection != null) {
+          // Fetch from a nested collection
+          collectionRef =
+              collectionRef.doc(documentId).collection(innerCollection);
+          QuerySnapshot querySnapshot = await collectionRef.get();
+
+          return querySnapshot.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return {
+              ...data,
+              'id': doc.id,
+            };
+          }).toList();
         } else {
-          throw Exception("Document not found");
+          DocumentSnapshot docSnapshot =
+              await collectionRef.doc(documentId).get();
+          if (docSnapshot.exists) {
+            return [
+              {
+                ...(docSnapshot.data() as Map<String, dynamic>),
+                'id': docSnapshot.id,
+              }
+            ];
+          } else {
+            throw Exception("Document not found");
+          }
         }
       }
 
@@ -272,12 +288,28 @@ class Repository {
     required String collection,
     String? documentId, // Optional to specify a document ID
     String? innerCollection,
+    String? innerDocumentId, // Optional for nested document ID
     required Map<String, dynamic> data,
+    bool isUpdate = false, // Flag to indicate if it's an update
   }) async {
     try {
       CollectionReference collectionRef = firestore.collection(collection);
 
       if (documentId != null && innerCollection != null) {
+        if (innerDocumentId != null) {
+          // Update existing document in subcollection
+          DocumentReference subDocRef = collectionRef
+              .doc(documentId)
+              .collection(innerCollection)
+              .doc(innerDocumentId);
+          if (isUpdate) {
+            await subDocRef.update(data);
+          } else {
+            await subDocRef.set(data);
+          }
+          print("Data updated in subcollection with ID: $innerDocumentId");
+          return innerDocumentId;
+        }
         // Add to subcollection under specific document
         CollectionReference subColRef =
             collectionRef.doc(documentId).collection(innerCollection);
@@ -286,7 +318,11 @@ class Repository {
         print("Data posted to subcollection with ID: ${subDocRef.id}");
         return subDocRef.id;
       } else if (documentId != null) {
-        await collectionRef.doc(documentId).update(data);
+        if (isUpdate) {
+          await collectionRef.doc(documentId).update(data);
+        } else {
+          await collectionRef.doc(documentId).set(data);
+        }
         print("Data posted with custom ID: $documentId");
         return documentId;
       } else {
@@ -303,9 +339,22 @@ class Repository {
   deleteData({
     required String collection,
     required String documentId,
+    String? innerCollection, // Optional for nested collections
+    String? innerDocumentId, // Optional for nested document ID
   }) async {
     try {
       CollectionReference collectionRef = firestore.collection(collection);
+
+      if (innerCollection != null && innerDocumentId != null) {
+        // Delete from a nested collection
+        await collectionRef
+            .doc(documentId)
+            .collection(innerCollection)
+            .doc(innerDocumentId)
+            .delete();
+        print("Nested document deleted: $innerDocumentId");
+        return true;
+      }
 
       // Delete the document with the specified ID
       await collectionRef.doc(documentId).delete();

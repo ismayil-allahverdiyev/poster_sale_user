@@ -5,4 +5,5 @@ class LocalStorageConst {
   static const tokenExpDate = "tokenExpDate"; // string
   static const startPage = ""; // string
   static const language = ""; // string
+  static const basketId = "currentBasketId"; // string
 }

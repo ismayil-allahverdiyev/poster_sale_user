@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poster_sale_user/src/controllers/basket_overview/basket_overview_controller.dart';
 import 'package:poster_sale_user/src/routes/app_routes.dart';
 
 import '../../../constants/assets.dart';
 import '../../theme/app_colors.dart';
 
-class FinalizeButtonWidget extends StatelessWidget {
+class FinalizeButtonWidget extends GetWidget<BasketOverviewController> {
   const FinalizeButtonWidget({
     super.key,
   });
@@ -15,13 +16,12 @@ class FinalizeButtonWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () => Get.toNamed(Routes.MESSAGESDETAILED),
       child: Stack(
-        alignment: Alignment.centerRight,
+        alignment: Alignment.center,
         children: [
           Stack(
             children: [
               Container(
                 height: Get.width * 0.15,
-                width: Get.width * 0.8,
                 decoration: BoxDecoration(
                   color: textColor,
                   borderRadius: BorderRadius.circular(8),
@@ -32,7 +32,7 @@ class FinalizeButtonWidget extends StatelessWidget {
                       width: Get.width * 0.5,
                       child: const Center(
                         child: Text(
-                          "Finalize",
+                          "Checkout",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -49,11 +49,11 @@ class FinalizeButtonWidget extends StatelessWidget {
                         color: greyColor,
                       ),
                     ),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             "Total",
                             style: TextStyle(
                               fontSize: 12,
@@ -61,14 +61,18 @@ class FinalizeButtonWidget extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            "100\$",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: whiteColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          Obx(() {
+                            return Text(
+                              controller.isLoading.value
+                                  ? ""
+                                  : "${controller.totalPrice}\$",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: whiteColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }),
                         ],
                       ),
                     ),

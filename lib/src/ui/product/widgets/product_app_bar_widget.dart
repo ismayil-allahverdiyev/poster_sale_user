@@ -34,21 +34,25 @@ class ProductAppBar extends GetWidget<ProductController> {
                   ? const PosterDateLoaderWidget()
                   : Text(
                       "${formatDateToMonthYear(controller.poster.value!.startDate)} - ${formatDateToMonthYear(controller.poster.value!.endDate)}",
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     );
             },
           ),
-          SizedBox(
-            width: 10,
-          ),
-          // *Reminder* Turn on for user app
-
-          // CustomIconButton(
-          //   assetPath: Assets.icon_add_bag,
-          //   onTap: () {},
-          // )
+          Obx(
+            () {
+              return CustomIconButton(
+                assetPath: controller.isInBasket.value
+                    ? Assets.icon_bag_tick
+                    : Assets.icon_add_bag,
+                onTap: () {
+                  controller.addToBasket();
+                },
+              );
+            },
+          )
         ],
       ),
     );

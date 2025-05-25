@@ -45,6 +45,8 @@ class Assets {
 
   static const String icon_add_bag = "assets/icons/icon-add-bag.png";
 
+  static const String icon_bag_tick = "assets/icons/icon-bag-tick.png";
+
   static const String icon_send = "assets/base_icons/icon-send.png";
 
   static const String icon_warning = "assets/icons/icon-warning.png";

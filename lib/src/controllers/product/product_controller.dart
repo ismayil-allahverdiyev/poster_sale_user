@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poster_sale_user/src/data/models/basket/basket_item_model.dart';
 import 'package:poster_sale_user/src/data/models/chat/chat_model.dart';
 import 'package:poster_sale_user/src/data/models/message/message_model.dart';
 import 'package:poster_sale_user/src/routes/app_routes.dart';
+import '../../constants/local_storage.dart';
 import '../../data/models/poster/poster_model.dart';
 import '../../data/repository/repository.dart';
+import '../basket_overview/basket_overview_controller.dart';
+import '../local_storage/local_storage_controller.dart';
 
 class ProductController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -26,6 +30,8 @@ class ProductController extends GetxController
   var chatId = Rxn<String>();
   var chatStatus = ChatStatus.normal.obs;
   var customerId = Rxn<String>();
+  var isInBasket = false.obs;
+  String basketId = "";
 
   var poster = Rxn<PosterModel>();
   // ***********************************************
@@ -36,6 +42,7 @@ class ProductController extends GetxController
     super.onInit();
 
     getUserId();
+    await checkIfInBasket();
     await getPoster();
     await getChatId();
   }
@@ -77,6 +84,40 @@ class ProductController extends GetxController
     customerId.value = repository.getUserId();
   }
 
+  checkIfInBasket() async {
+    try {
+      var localStorageController = Get.find<LocalStorageController>();
+      basketId = localStorageController.getStringFromLocal(
+        LocalStorageConst.basketId,
+      );
+
+      checkBasics();
+
+      var basketItems = (await repository.getData(
+        collection: "baskets",
+        documentId: basketId,
+        innerCollection: "list",
+      ))
+          .map((e) => BasketItemModel.fromJson(e))
+          .toList();
+
+      if (basketItems.isEmpty) {
+        repository.errorHandler(
+          title: "Basket not found",
+          message: "Something went wrong! Please try again later.",
+        );
+        return;
+      } else {
+        isInBasket.value = basketItems.any((item) => item.productId == id);
+      }
+    } catch (e) {
+      repository.errorHandler(
+        title: "Could not check basket",
+        message: e.toString(),
+      );
+    }
+  }
+
   checkBasics() {
     if (customerId.value == null) {
       repository.errorHandler(
@@ -91,6 +132,14 @@ class ProductController extends GetxController
       repository.errorHandler(
         title: "Something went wrong!",
         message: "Poster not available.",
+      );
+      return;
+    }
+
+    if (basketId == "") {
+      repository.errorHandler(
+        title: "Basket not found",
+        message: "Something went wrong! Please try again later.",
       );
       return;
     }
@@ -178,6 +227,113 @@ class ProductController extends GetxController
         title: "Message error",
         message: e.toString(),
       );
+    }
+  }
+
+  addToBasket() async {
+    try {
+      if (isLoaded.value == false) return;
+      checkBasics();
+
+      var localStorageController = Get.find<LocalStorageController>();
+      var basketId = localStorageController.getStringFromLocal(
+        LocalStorageConst.basketId,
+      );
+
+      if (basketId == "") {
+        repository.errorHandler(
+          title: "Basket not found",
+          message: "Something went wrong! Please try again later.",
+        );
+        return;
+      }
+
+      if (isInBasket.value) {
+        await removeFromBasket();
+        return;
+      }
+
+      var res = await repository.postData(
+        collection: "baskets",
+        documentId: basketId,
+        innerCollection: "list",
+        innerDocumentId: id,
+        data: BasketItemModel.fromPoster(poster: poster.value!).toJson(),
+      );
+
+      if (res == null) {
+        repository.errorHandler(
+          title: "Could not add to basket",
+          message: "Please try again later.",
+        );
+        return;
+      } else {
+        isInBasket.value = true;
+
+        await updateBasketPage();
+      }
+    } catch (e) {
+      repository.errorHandler(
+        title: "Could not add to basket",
+        message: e.toString(),
+      );
+    }
+  }
+
+  removeFromBasket() async {
+    try {
+      if (isLoaded.value == false) return;
+      checkBasics();
+
+      var localStorageController = Get.find<LocalStorageController>();
+      var basketId = localStorageController.getStringFromLocal(
+        LocalStorageConst.basketId,
+      );
+
+      if (basketId == "") {
+        repository.errorHandler(
+          title: "Basket not found",
+          message: "Something went wrong! Please try again later.",
+        );
+        return;
+      }
+
+      if (!isInBasket.value) {
+        await addToBasket();
+        return;
+      }
+
+      var res = await repository.deleteData(
+        collection: "baskets",
+        documentId: basketId,
+        innerCollection: "list",
+        innerDocumentId: id,
+      );
+
+      if (res == null) {
+        repository.errorHandler(
+          title: "Could not remove from basket",
+          message: "Please try again later.",
+        );
+        return;
+      } else {
+        isInBasket.value = false;
+
+        await updateBasketPage();
+      }
+    } catch (e) {
+      repository.errorHandler(
+        title: "Could not remove from basket",
+        message: e.toString(),
+      );
+    }
+  }
+
+  updateBasketPage() async {
+    var basketOverviewController = Get.find<BasketOverviewController>();
+
+    if (!basketOverviewController.isClosed) {
+      await basketOverviewController.getBasketItems();
     }
   }
 

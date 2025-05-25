@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../constants/assets.dart';
+import '../../theme/app_colors.dart';
 import '../../widgets/source/custom_icon_button.dart';
 
 class MessagesDetailedAppBar extends StatelessWidget {
@@ -21,9 +22,25 @@ class MessagesDetailedAppBar extends StatelessWidget {
               Get.back();
             },
           ),
-          CustomIconButton(
-            assetPath: Assets.icon_dots,
-            onTap: () {},
+          PopupMenuButton(
+            color: whiteColor,
+            menuPadding: const EdgeInsets.all(0),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                child: const Text(
+                  "Add to basket",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+                onTap: () => {},
+              ),
+            ],
+            child: Image.asset(
+              Assets.icon_dots,
+              scale: 3,
+            ),
           )
         ],
       ),

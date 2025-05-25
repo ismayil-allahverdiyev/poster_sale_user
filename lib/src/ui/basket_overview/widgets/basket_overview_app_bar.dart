@@ -17,6 +17,7 @@ class BasketOverviewAppBar extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       children: [
         Container(
+          width: Get.width,
           decoration: BoxDecoration(
             color: secondaryColor.withOpacity(0.1),
           ),
@@ -27,21 +28,7 @@ class BasketOverviewAppBar extends StatelessWidget {
               Get.width * 0.04,
               Get.width * 0.05,
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomIconButton(
-                  assetPath: Assets.icon_arrow_left,
-                  onTap: () {
-                    Get.back();
-                  },
-                ),
-                const Expanded(
-                  child: FinalizeButtonWidget(),
-                )
-              ],
-            ),
+            child: const FinalizeButtonWidget(),
           ),
         ),
       ],

@@ -29,6 +29,9 @@ class MessagesDetailedPage extends GetView<MessagesDetailedController> {
             children: const [
               ImageCarouselInChatWidget(),
               TextListWidget(),
+              SizedBox(
+                height: 64,
+              ),
             ],
           ),
         ),

@@ -1,13 +1,11 @@
 import 'package:get/get.dart';
 import 'package:poster_sale_user/src/bindings/login/login_bindings.dart';
 import 'package:poster_sale_user/src/bindings/settings/settings_bindings.dart';
-import 'package:poster_sale_user/src/bindings/baskets_overview/baskets_overview_bindings.dart';
 import 'package:poster_sale_user/src/bindings/message_overview/message_overview_bindings.dart';
 import 'package:poster_sale_user/src/bindings/product/product_bindings.dart';
 import 'package:poster_sale_user/src/bindings/profile/profile_bindings.dart';
 import 'package:poster_sale_user/src/ui/login/sign_up_overview_page.dart';
 import 'package:poster_sale_user/src/ui/settings/settings_page.dart';
-import 'package:poster_sale_user/src/ui/baskets_overview/baskets_overview_page.dart';
 import 'package:poster_sale_user/src/ui/message_overview/message_overview_page.dart';
 import 'package:poster_sale_user/src/ui/messages_detailed/messages_detailed_page.dart';
 import 'package:poster_sale_user/src/ui/product/product_page.dart';
@@ -54,11 +52,6 @@ class AppPages {
       name: Routes.MESSAGESDETAILED,
       page: () => const MessagesDetailedPage(),
       binding: MessagesDetailedBindings(),
-    ),
-    GetPage(
-      name: Routes.BASKETSOVERVIEW,
-      page: () => const BasketsOverviewPage(),
-      binding: BasketsOverviewBindings(),
     ),
     GetPage(
       name: Routes.BASKETOVERVIEW,
