@@ -70,4 +70,6 @@ class Assets {
   static const String icon_eye = "assets/base_icons/icon-eye.png";
 
   static const String icon_eye_slash = "assets/base_icons/icon-eye-slash.png";
+
+  static const String image_verify = "assets/images/image-verify.png";
 }

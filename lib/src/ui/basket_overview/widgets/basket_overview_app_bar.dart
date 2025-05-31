@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poster_sale_user/src/ui/theme/app_colors.dart';
-
-import '../../../constants/assets.dart';
-import '../../widgets/source/custom_icon_button.dart';
 import 'finalize_button_widget.dart';
 
 class BasketOverviewAppBar extends StatelessWidget {

@@ -9,11 +9,13 @@ class CustomRoundedButton extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     this.onTap,
+    this.width,
   });
 
   final String message;
   final Color? backgroundColor;
   final Color? textColor;
+  final double? width;
   final void Function()? onTap;
 
   @override
@@ -22,6 +24,7 @@ class CustomRoundedButton extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Container(
+        width: width,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(8),

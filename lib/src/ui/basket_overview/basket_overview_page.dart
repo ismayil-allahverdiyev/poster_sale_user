@@ -39,6 +39,9 @@ class BasketOverviewPage extends GetView<BasketOverviewController> {
                       itemBuilder: (context, index) {
                         return BasketProductWidget(
                           basketItem: controller.basketItems[index],
+                          onRemove: () => controller.removeItemFromBasket(
+                            controller.basketItems[index].id,
+                          ),
                         );
                       },
                       separatorBuilder: (context, index) =>

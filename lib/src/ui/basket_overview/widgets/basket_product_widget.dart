@@ -13,9 +13,11 @@ class BasketProductWidget extends StatelessWidget {
   const BasketProductWidget({
     super.key,
     required this.basketItem,
+    required this.onRemove,
   });
 
   final BasketItemModel basketItem;
+  final Function onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +61,9 @@ class BasketProductWidget extends StatelessWidget {
           ),
           CustomIconButton(
             assetPath: Assets.icon_trash,
-            onTap: () {},
+            onTap: () {
+              onRemove();
+            },
           )
         ],
       ),

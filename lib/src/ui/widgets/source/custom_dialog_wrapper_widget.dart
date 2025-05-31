@@ -6,12 +6,14 @@ class CustomDialogWrapperWidget extends StatelessWidget {
   final List<Widget> children;
   final double? width;
   final double? height;
+  final EdgeInsets? padding;
 
   const CustomDialogWrapperWidget({
     super.key,
     required this.children,
     this.height,
     this.width,
+    this.padding,
   });
 
   @override
@@ -30,8 +32,11 @@ class CustomDialogWrapperWidget extends StatelessWidget {
             child: Material(
               color: whiteColor,
               borderRadius: BorderRadius.circular(8),
-              child: Column(
-                children: children,
+              child: Padding(
+                padding: padding ?? const EdgeInsets.all(0),
+                child: Column(
+                  children: children,
+                ),
               ),
             ),
           ),

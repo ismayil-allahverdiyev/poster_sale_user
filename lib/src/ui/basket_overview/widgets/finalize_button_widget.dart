@@ -14,7 +14,7 @@ class FinalizeButtonWidget extends GetWidget<BasketOverviewController> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(Routes.MESSAGESDETAILED),
+      onTap: () => controller.checkoutBasket(),
       child: Stack(
         alignment: Alignment.center,
         children: [
