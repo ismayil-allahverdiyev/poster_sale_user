@@ -91,7 +91,22 @@ class ProductController extends GetxController
         LocalStorageConst.basketId,
       );
 
-      checkBasics();
+      if (customerId.value == null) {
+        repository.errorHandler(
+          title: "Something went wrong!",
+          message: "Could not get user information.",
+        );
+
+        return;
+      }
+
+      if (basketId == "") {
+        repository.errorHandler(
+          title: "Basket not found",
+          message: "Something went wrong! Please try again later.",
+        );
+        return;
+      }
 
       var basketItems = (await repository.getData(
         collection: "baskets",
@@ -101,15 +116,7 @@ class ProductController extends GetxController
           .map((e) => BasketItemModel.fromJson(e))
           .toList();
 
-      if (basketItems.isEmpty) {
-        repository.errorHandler(
-          title: "Basket not found",
-          message: "Something went wrong! Please try again later.",
-        );
-        return;
-      } else {
-        isInBasket.value = basketItems.any((item) => item.id == id);
-      }
+      isInBasket.value = basketItems.any((item) => item.id == id);
     } catch (e) {
       repository.errorHandler(
         title: "Could not check basket",

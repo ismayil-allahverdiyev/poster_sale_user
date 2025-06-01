@@ -17,6 +17,7 @@ class ChatModel {
   bool read;
   bool readByAdmin;
   ChatStatus chatStatus;
+  ChatType chatType = ChatType.general; // Default value, can be changed later
 
   ChatModel({
     required this.id,
@@ -29,6 +30,7 @@ class ChatModel {
     required this.read,
     required this.readByAdmin,
     required this.chatStatus,
+    this.chatType = ChatType.general,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) => ChatModel(
@@ -42,6 +44,7 @@ class ChatModel {
         read: json["read"] ?? false,
         readByAdmin: json["readByAdmin"] ?? false,
         chatStatus: ChatStatus.values[0 - json["chatStatus"] as int],
+        chatType: ChatType.values[json["chatType"] ?? 0],
       );
 
   Map<String, dynamic> toJson() => {
@@ -54,6 +57,7 @@ class ChatModel {
         "read": read,
         "readByAdmin": readByAdmin,
         "chatStatus": chatStatus.index,
+        "chatType": chatType.index,
       };
 }
 
@@ -61,4 +65,9 @@ enum ChatStatus {
   normal,
   timeout,
   blocked,
+}
+
+enum ChatType {
+  general,
+  basket,
 }

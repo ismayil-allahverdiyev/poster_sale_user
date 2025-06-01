@@ -431,6 +431,10 @@ class Repository {
   }
 
   errorHandler({required String title, required String message}) {
+    if (Get.isSnackbarOpen) {
+      Get.closeAllSnackbars();
+    }
+
     Get.snackbar(
       title,
       message,
@@ -443,6 +447,10 @@ class Repository {
   }
 
   showMessage({required String title, required String message}) {
+    if (Get.isSnackbarOpen) {
+      Get.closeAllSnackbars();
+    }
+
     Get.snackbar(
       title,
       message,
