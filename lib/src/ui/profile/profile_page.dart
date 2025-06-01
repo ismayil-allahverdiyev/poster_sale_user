@@ -23,14 +23,26 @@ class ProfilePage extends GetView<ProfileController> {
         const SizedBox(
           height: 16,
         ),
-        // BasketListWidget(),
         Expanded(
-          child: ListView.builder(
-            itemCount: 5,
-            padding: EdgeInsets.only(bottom: Get.width * 0.12 + 48),
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return const BasketListWidget();
+          child: Obx(
+            () {
+              return !controller.isLoaded.value
+                  ? ListView.builder(
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        return const BasketListWidgetLoader();
+                      },
+                    )
+                  : ListView.builder(
+                      itemCount: controller.previousOrders.length,
+                      padding: EdgeInsets.only(bottom: Get.width * 0.12 + 48),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return BasketListWidget(
+                          basket: controller.previousOrders[index],
+                        );
+                      },
+                    );
             },
           ),
         )

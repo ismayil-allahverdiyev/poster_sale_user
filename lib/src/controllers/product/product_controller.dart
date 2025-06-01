@@ -108,7 +108,7 @@ class ProductController extends GetxController
         );
         return;
       } else {
-        isInBasket.value = basketItems.any((item) => item.productId == id);
+        isInBasket.value = basketItems.any((item) => item.id == id);
       }
     } catch (e) {
       repository.errorHandler(

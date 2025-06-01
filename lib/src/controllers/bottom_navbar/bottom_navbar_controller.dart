@@ -153,7 +153,7 @@ class BottomNavBarController extends GetxController {
         collection: "baskets",
         data: BasketModel(
           id: "",
-          created: Timestamp.now(),
+          updated_at: Timestamp.now(),
           state: BasketState.active,
           userId: repository.getUserId()!,
         ).toAddJson(),

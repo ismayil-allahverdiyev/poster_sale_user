@@ -5,20 +5,21 @@ import 'package:poster_sale_user/src/data/models/poster/poster_model.dart';
 import 'package:poster_sale_user/src/routes/app_routes.dart';
 import 'package:poster_sale_user/src/ui/widgets/source/custom_shimmer_wrapper_widget.dart';
 import '../../../controllers/profile/profile_controller.dart';
+import '../../../data/models/basket/basket_item_model.dart';
 import '../../theme/app_colors.dart';
 
 class ProfileProductWidget extends GetWidget<ProfileController> {
-  final PosterModel poster;
+  final BasketItemModel basketItem;
   const ProfileProductWidget({
     super.key,
-    required this.poster,
+    required this.basketItem,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: CachedNetworkImage(
-        imageUrl: poster.images[0],
+        imageUrl: basketItem.image,
         imageBuilder: (context, imageProvider) => Container(
           width: 48,
           height: 48,
@@ -35,7 +36,7 @@ class ProfileProductWidget extends GetWidget<ProfileController> {
         errorWidget: (context, url, error) => const ProfileProductImageLoader(),
       ),
       trailing: Text(
-        "${poster.price}\$",
+        "${basketItem.addedPrice}\$",
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(
@@ -45,7 +46,7 @@ class ProfileProductWidget extends GetWidget<ProfileController> {
         ),
       ),
       title: Text(
-        poster.title,
+        basketItem.title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(
@@ -54,7 +55,7 @@ class ProfileProductWidget extends GetWidget<ProfileController> {
         ),
       ),
       subtitle: Text(
-        poster.description,
+        basketItem.description,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(
@@ -68,7 +69,7 @@ class ProfileProductWidget extends GetWidget<ProfileController> {
         Get.toNamed(
           Routes.PRODUCT,
           parameters: {
-            "id": poster.id,
+            "id": basketItem.id,
           },
         );
       },

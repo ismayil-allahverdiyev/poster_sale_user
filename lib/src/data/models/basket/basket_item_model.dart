@@ -13,7 +13,6 @@ class BasketItemModel {
   double addedPrice;
   String description;
   String image;
-  String productId;
   String title;
 
   BasketItemModel({
@@ -21,7 +20,6 @@ class BasketItemModel {
     required this.addedPrice,
     required this.description,
     required this.image,
-    required this.productId,
     required this.title,
   });
 
@@ -31,7 +29,6 @@ class BasketItemModel {
         addedPrice: poster.price,
         description: poster.description,
         image: poster.images[0],
-        productId: poster.id,
         title: poster.title,
       );
 
@@ -41,7 +38,6 @@ class BasketItemModel {
         addedPrice: (json["added_price"] ?? 0).toDouble(),
         description: json["description"] ?? "",
         image: json["image"] ?? "",
-        productId: json["productid"] ?? "",
         title: json["title"] ?? "",
       );
 
@@ -49,7 +45,6 @@ class BasketItemModel {
         "added_price": addedPrice,
         "description": description,
         "image": image,
-        "productid": productId,
         "title": title,
       };
 }

@@ -13,9 +13,9 @@ class ProfilePageLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomShimmer(
       child: ListView.separated(
-        itemCount: 8,
+        itemCount: 3,
         shrinkWrap: true,
-        padding: EdgeInsets.only(bottom: Get.width * 0.12 + 48),
+        padding: const EdgeInsets.only(bottom: 24),
         itemBuilder: (context, index) {
           return ListTile(
             leading: Container(

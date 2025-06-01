@@ -206,6 +206,7 @@ class MessagesDetailedController extends GetxController
       var requestId = await repository.postData(
         collection: "chats",
         documentId: chatId.value!,
+        isUpdate: true,
         data: {
           "lastMessage": message.text,
           "lastMessageId": message.id,
